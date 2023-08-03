@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../components/button.dart';
@@ -5,6 +6,7 @@ import '../components/text_field.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
+
   const LoginPage({super.key, required this.onTap});
 
   @override
@@ -16,6 +18,39 @@ class _LoginPageState extends State<LoginPage> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
 
+  //sign user in
+  void signIn() async {
+    //show loading circle
+    showDialog(
+        context: context,
+        builder: (context) => const Center(child: CircularProgressIndicator()));
+
+    //try sign in
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailTextController.text,
+        password: passwordTextController.text,
+      );
+      //pop loading circle
+      if (context.mounted) Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      //pop loading circle
+      Navigator.pop(context);
+      //display error message
+      displayMessage(e.code);
+    }
+  }
+
+  //display a dialog message
+  void displayMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(message),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +59,10 @@ class _LoginPageState extends State<LoginPage> {
           child: Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: ListView(
+                //mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const SizedBox(height: 120),
                   //logo
                   const Icon(Icons.lock, size: 100),
                   const SizedBox(height: 50),
@@ -51,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 10),
 
                   //sign in button
-                  MyButton(onTap: () {}, text: 'Sign In'),
+                  MyButton(onTap: signIn, text: 'Sign In'),
                   const SizedBox(height: 25),
 
                   //go to register page
