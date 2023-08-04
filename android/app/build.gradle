@@ -48,10 +48,12 @@ android {
         applicationId "com.example.social_media"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
     }
 
     buildTypes {
@@ -68,5 +70,16 @@ flutter {
 }
 
 dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+
+android {
+    defaultConfig {
+        // Définir minSdkVersion à 21 pour activer le support multidex.
+        minSdkVersion 21
+
+        // Ajouter l'attribut multiDexEnabled.
+        multiDexEnabled true
+    }
 }
